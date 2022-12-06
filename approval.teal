@@ -1,0 +1,99 @@
+#pragma version 5
+txn ApplicationID
+int 0
+==
+bnz main_l18
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l17
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l16
+txn OnCompletion
+int OptIn
+==
+bnz main_l15
+txn OnCompletion
+int CloseOut
+==
+bnz main_l14
+txn OnCompletion
+int NoOp
+==
+bnz main_l7
+err
+main_l7:
+txna ApplicationArgs 0
+byte "create"
+==
+bnz main_l13
+txna ApplicationArgs 0
+byte "complete"
+==
+bnz main_l12
+txna ApplicationArgs 0
+byte "remove"
+==
+bnz main_l11
+err
+main_l11:
+int 0
+int 0
+app_opted_in
+txn Sender
+txna ApplicationArgs 1
+app_local_get
+int 1
+==
+&&
+assert
+txn Sender
+txna ApplicationArgs 1
+app_local_del
+int 1
+return
+main_l12:
+int 0
+int 0
+app_opted_in
+txn Sender
+txna ApplicationArgs 1
+app_local_get
+int 0
+==
+&&
+assert
+txn Sender
+txna ApplicationArgs 1
+int 1
+app_local_put
+int 1
+return
+main_l13:
+int 0
+int 0
+app_opted_in
+assert
+txn Sender
+txna ApplicationArgs 1
+int 0
+app_local_put
+int 1
+return
+main_l14:
+int 0
+return
+main_l15:
+int 1
+return
+main_l16:
+int 0
+return
+main_l17:
+int 0
+return
+main_l18:
+int 1
+return
